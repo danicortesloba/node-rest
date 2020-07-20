@@ -5,6 +5,35 @@ const bcrypt = require('bcrypt');
 const _=require('underscore');
 const { verificaToken, verificaAdminRole} = require('../middleware/authentication')
 
+
+app.get('/user/:id', verificaToken, (req,res) => {
+  let id = req.params.id
+  User.findById(id)
+          .exec ((err, userDB) =>{
+      if(err) {
+          return res.status(500).json({
+              ok: false,
+              err
+          });
+      }
+
+      if(!userDB) {
+          return res.status(400).json({
+              ok: false,
+              err: {
+                  message: 'El id no existe'
+              }
+          });
+      }
+  
+      res.json({
+          ok:true,
+          userDB
+      })
+  })
+
+})
+
 app.get('/user', verificaToken, (req, res) => {
   let desde = req.query.desde || 0;
   desde = Number(desde);
